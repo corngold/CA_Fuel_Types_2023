@@ -35,7 +35,7 @@ df_top_zip_codes = df_2023[df_2023['Zip Code'].astype(str).isin(top_zip_codes)]
 # Grouping the filtered dataframe by zip code and fuel type
 fuel_type_counts_top_zip_codes = df_top_zip_codes.groupby(['Zip Code', 'Fuel']).size().unstack().fillna(0)
 
-# distribution of fuel types for the top zip codes (heat map)
+# heat map for top zip codes 
 plt.figure(figsize=(12, 8))
 sns.heatmap(fuel_type_counts_top_zip_codes, annot=True, fmt='g', cmap='YlGnBu')
 plt.xlabel('Fuel Type')
@@ -43,6 +43,9 @@ plt.ylabel('Zip Code')
 plt.title('Distribution of Fuel Types for Top 15 Most Prevalent Zip Codes in 2023')
 plt.tight_layout()
 plt.show()
+# plot note: interestingly, in the Electric Battery category, 
+the zip code with the highest number of vehicles in this category is 91709, 
+which is found in Chino Hills (LA, California)
 
 # top 15 most prevalent zip codes
 zip_code_counts_top_15 = zip_code_counts_23.head(15)
