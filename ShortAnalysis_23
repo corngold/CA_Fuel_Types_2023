@@ -5,12 +5,6 @@ import numpy as np
 
 df_2023 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2023.csv',
                       parse_dates=[0], dtype={'Date': str})
-df_2022 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2022.csv',
-                      parse_dates=[0], dtype={'Date': str})
-df_2021 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2021.csv',
-                      parse_dates=[0], dtype={'Date': str})
-df_2020 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2020.csv',
-                      parse_dates=[0], dtype={'Date': str})
 
 # summary statistics to familiarize myself with the data
 most_common_make_2023 = df_2023['Make'].value_counts()
