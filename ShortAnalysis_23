@@ -1,0 +1,77 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+df_2023 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2023.csv',
+                      parse_dates=[0], dtype={'Date': str})
+df_2022 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2022.csv',
+                      parse_dates=[0], dtype={'Date': str})
+df_2021 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2021.csv',
+                      parse_dates=[0], dtype={'Date': str})
+df_2020 = pd.read_csv('/Users/rebec/Downloads/vehicle-fuel-type-count-by-zip-code-2020.csv',
+                      parse_dates=[0], dtype={'Date': str})
+
+# summary statistics to familiarize myself with the data
+most_common_make_2023 = df_2023['Make'].value_counts()
+most_common_fuel_type_2023 = df_2023['Fuel'].value_counts()
+print(most_common_fuel_type_2023)
+print(most_common_make_2023)
+most_common_zip_2023 = df_2023['Zip Code'].value_counts()
+print(most_common_zip_2023)
+
+# starting to visualize data
+fuel_type_counts_2023 = df_2023.groupby(['Zip Code', 'Fuel']).size().unstack().fillna(0)
+
+# counts of vehicles for each zip code
+zip_code_counts_23 = df_2023['Zip Code'].astype(str).value_counts()
+
+# top 15 most prevalent zip codes
+top_zip_codes = zip_code_counts_23.head(15).index
+
+# Filtering the dataframe to include only the top zip codes
+df_top_zip_codes = df_2023[df_2023['Zip Code'].astype(str).isin(top_zip_codes)]
+
+# Grouping the filtered dataframe by zip code and fuel type
+fuel_type_counts_top_zip_codes = df_top_zip_codes.groupby(['Zip Code', 'Fuel']).size().unstack().fillna(0)
+
+# distribution of fuel types for the top zip codes (heat map)
+plt.figure(figsize=(12, 8))
+sns.heatmap(fuel_type_counts_top_zip_codes, annot=True, fmt='g', cmap='YlGnBu')
+plt.xlabel('Fuel Type')
+plt.ylabel('Zip Code')
+plt.title('Distribution of Fuel Types for Top 15 Most Prevalent Zip Codes in 2023')
+plt.tight_layout()
+plt.show()
+
+# top 15 most prevalent zip codes
+zip_code_counts_top_15 = zip_code_counts_23.head(15)
+top_zip_codes_df = pd.DataFrame({'Zip Code': zip_code_counts_top_15.index})
+
+# Grouping the filtered dataframe by fuel type
+fuel_type_counts_top_zip_codes = df_top_zip_codes.groupby('Fuel').size()
+
+# Filtering out 'Unk' and 'Other' from the 'Fuel' column
+filtered_df_2023 = df_2023[~df_2023['Fuel'].isin(['Unk', 'Other'])]
+
+# Calculating the counts for each fuel type
+fuel_type_counts_filtered = filtered_df_2023['Fuel'].value_counts()
+
+# Filtering the Dataframe to exclude 'Unk' and 'Other' categories
+filtered_fuel_types = fuel_type_counts_filtered[~fuel_type_counts_filtered.index.isin(['Unk', 'Other'])]
+
+# Creating a colormap
+colors = plt.cm.viridis(np.linspace(1, 0, len(filtered_fuel_types)))
+
+# Creating a colored bar chart
+plt.figure(figsize=(12, 6))
+bars = plt.bar(filtered_fuel_types.index, filtered_fuel_types.values, color=colors)
+
+# Adding an explanation bar
+plt.colorbar(plt.cm.ScalarMappable(cmap='viridis'), ax=plt.gca())
+plt.xlabel('Fuel Type')
+plt.ylabel('Count')
+plt.title('Distribution of Vehicle Fuel Types in 2023 (Excluding Unk and Other)')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
